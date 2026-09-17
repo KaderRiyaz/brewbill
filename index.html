@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>BrewBill — Coffee Shop Billing</title>
+<meta name="description" content="Offline-first billing, product and finance manager for coffee shops." />
+<meta name="theme-color" content="#1C1310" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===== Sidebar (desktop) / Top bar (mobile) ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">☕</span>
+      <span class="brand-name" data-shop-name>BrewBill</span>
+    </div>
+    <div class="topbar-status" data-online-status>Offline-ready</div>
+  </header>
+
+  <nav class="sidenav" aria-label="Main navigation">
+    <button class="nav-item active" data-tab="billing">
+      <span class="nav-icon">🧾</span><span>Billing</span>
+    </button>
+    <button class="nav-item" data-tab="products">
+      <span class="nav-icon">📦</span><span>Products</span>
+    </button>
+    <button class="nav-item" data-tab="finance">
+      <span class="nav-icon">📊</span><span>Finance</span>
+    </button>
+    <button class="nav-item" data-tab="settings">
+      <span class="nav-icon">⚙️</span><span>Settings</span>
+    </button>
+  </nav>
+
+  <main class="main-area">
+
+    <!-- ===================== BILLING TAB ===================== -->
+    <section class="tab-panel active" data-panel="billing">
+      <div class="billing-layout">
+
+        <div class="billing-catalog">
+          <div class="panel-header">
+            <h1>New order</h1>
+            <div class="search-row">
+              <input type="search" placeholder="Search products…" data-billing-search aria-label="Search products" />
+              <select data-billing-category aria-label="Filter by category"></select>
+            </div>
+          </div>
+          <div class="product-grid" data-billing-products></div>
+        </div>
+
+        <aside class="order-panel" data-order-panel>
+          <div class="order-panel-header">
+            <h2>Current order</h2>
+            <button class="link-btn" data-clear-order>Clear</button>
+          </div>
+
+          <div class="order-lines" data-order-lines>
+            <div class="empty-state">No items yet. Tap a product to add it.</div>
+          </div>
+
+          <div class="order-discount">
+            <label>Discount</label>
+            <div class="discount-controls">
+              <select data-discount-type>
+                <option value="percent">%</option>
+                <option value="fixed">Amount</option>
+              </select>
+              <input type="number" min="0" step="0.01" value="0" data-discount-value />
+            </div>
+          </div>
+
+          <div class="order-totals">
+            <div class="total-row"><span>Subtotal</span><span data-total-subtotal>0.00</span></div>
+            <div class="total-row"><span>Discount</span><span data-total-discount>0.00</span></div>
+            <div class="total-row"><span data-tax-label>Tax</span><span data-total-tax>0.00</span></div>
+            <div class="total-row grand"><span>Total</span><span data-total-grand>0.00</span></div>
+          </div>
+
+          <button class="btn primary large" data-checkout>Checkout</button>
+        </aside>
+
+        <button class="mobile-cart-fab" data-mobile-cart-toggle>
+          🛒 <span data-cart-count>0</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== PRODUCTS TAB ===================== -->
+    <section class="tab-panel" data-panel="products">
+      <div class="panel-header">
+        <h1>Products</h1>
+        <button class="btn primary" data-open-product-form>+ Add product</button>
+      </div>
+      <div class="search-row">
+        <input type="search" placeholder="Search products…" data-product-search aria-label="Search products" />
+        <select data-product-category aria-label="Filter by category"></select>
+      </div>
+      <div class="product-grid" data-product-list></div>
+    </section>
+
+    <!-- ===================== FINANCE TAB ===================== -->
+    <section class="tab-panel" data-panel="finance">
+      <div class="panel-header">
+        <h1>Income &amp; expenses</h1>
+      </div>
+
+      <div class="finance-layout">
+        <div class="finance-form-card">
+          <h2>Add entry</h2>
+          <form data-finance-form>
+            <div class="segmented" data-entry-type>
+              <button type="button" class="seg active" data-type="income">Income</button>
+              <button type="button" class="seg" data-type="expense">Expense</button>
+            </div>
+            <label>Category
+              <select name="category" data-finance-category></select>
+            </label>
+            <label>Amount
+              <input type="number" name="amount" min="0.01" step="0.01" required />
+            </label>
+            <label>Date
+              <input type="date" name="date" required />
+            </label>
+            <label>Note (optional)
+              <input type="text" name="note" placeholder="e.g. Milk supplier invoice" />
+            </label>
+            <button type="submit" class="btn primary">Save entry</button>
+          </form>
+        </div>
+
+        <div class="finance-report-card">
+          <div class="report-range">
+            <div class="segmented" data-range-select>
+              <button type="button" class="seg active" data-range="day">Today</button>
+              <button type="button" class="seg" data-range="week">This week</button>
+              <button type="button" class="seg" data-range="month">This month</button>
+            </div>
+          </div>
+          <div class="report-summary">
+            <div class="stat-card income"><span class="stat-label">Income</span><span class="stat-value" data-report-income>0.00</span></div>
+            <div class="stat-card expense"><span class="stat-label">Expenses</span><span class="stat-value" data-report-expense>0.00</span></div>
+            <div class="stat-card net"><span class="stat-label">Net</span><span class="stat-value" data-report-net>0.00</span></div>
+          </div>
+          <h3>Transactions</h3>
+          <div class="transaction-list" data-transaction-list></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SETTINGS TAB ===================== -->
+    <section class="tab-panel" data-panel="settings">
+      <div class="panel-header"><h1>Settings</h1></div>
+
+      <div class="settings-layout">
+        <div class="settings-card">
+          <h2>Shop details</h2>
+          <form data-settings-form>
+            <label>Shop name
+              <input type="text" name="shopName" required />
+            </label>
+            <label>Currency symbol
+              <input type="text" name="currency" maxlength="3" required />
+            </label>
+            <label>Tax rate (%)
+              <input type="number" name="taxRate" min="0" max="100" step="0.01" required />
+            </label>
+            <button type="submit" class="btn primary">Save settings</button>
+          </form>
+        </div>
+
+        <div class="settings-card">
+          <h2>Backup &amp; export</h2>
+          <p class="muted">All data lives on this device. Export regularly to keep a safe copy.</p>
+          <div class="btn-stack">
+            <button class="btn" data-export-json>Export full backup (JSON)</button>
+            <button class="btn" data-export-products-csv>Export products (CSV)</button>
+            <button class="btn" data-export-orders-csv>Export orders (CSV)</button>
+            <button class="btn" data-export-transactions-csv>Export transactions (CSV)</button>
+          </div>
+          <h3>Restore backup</h3>
+          <p class="muted">Importing a JSON backup adds to (or updates) existing data — it won't erase anything else.</p>
+          <input type="file" accept="application/json" data-import-json />
+        </div>
+
+        <div class="settings-card">
+          <h2>About this install</h2>
+          <p class="muted">BrewBill works fully offline once loaded. Install it to your home screen or desktop for the fastest, full-screen experience. See the included README for Windows and mobile packaging steps.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile bottom tab bar -->
+  <nav class="bottom-tabs" aria-label="Main navigation mobile">
+    <button class="bottom-tab active" data-tab="billing"><span class="nav-icon">🧾</span><span>Bill</span></button>
+    <button class="bottom-tab" data-tab="products"><span class="nav-icon">📦</span><span>Products</span></button>
+    <button class="bottom-tab" data-tab="finance"><span class="nav-icon">📊</span><span>Finance</span></button>
+    <button class="bottom-tab" data-tab="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+  </nav>
+</div>
+
+<!-- ===================== Product form modal ===================== -->
+<div class="modal-backdrop" data-product-modal>
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 data-form-title>Add product</h2>
+      <button class="icon-btn" data-close-product-form aria-label="Close">✕</button>
+    </div>
+    <form data-product-form>
+      <label>Product name
+        <input type="text" name="name" required maxlength="60" />
+      </label>
+      <label>Category
+        <select name="category" required data-product-form-category></select>
+      </label>
+      <label>Description (optional)
+        <textarea name="description" rows="2" maxlength="200"></textarea>
+      </label>
+      <div class="variants-block">
+        <div class="variants-header">
+          <label>Sizes / variants &amp; price</label>
+          <button type="button" class="link-btn" data-add-variant>+ Add size</button>
+        </div>
+        <div data-variant-rows></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close-product-form>Cancel</button>
+        <button type="submit" class="btn primary"><span data-submit-label>Save product</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== Mobile cart drawer ===================== -->
+<div class="drawer-backdrop" data-mobile-cart-drawer></div>
+
+<!-- ===================== Receipt modal ===================== -->
+<div class="modal-backdrop" data-receipt-modal>
+  <div class="modal receipt-modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Receipt</h2>
+      <button class="icon-btn" data-close-receipt aria-label="Close">✕</button>
+    </div>
+    <div class="receipt-body" data-receipt-body></div>
+    <div class="modal-actions">
+      <button class="btn" data-print-receipt>Print</button>
+      <button class="btn primary" data-new-order>Start new order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Toast ===================== -->
+<div class="toast" data-toast></div>
+
+<script src="js/db.js"></script>
+<script src="js/products.js"></script>
+<script src="js/billing.js"></script>
+<script src="js/finance.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
