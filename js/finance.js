@@ -35,8 +35,8 @@ const Finance = (() => {
   }
 
   async function resetPeriod(range, refDate = new Date()) {
-    if (range !== "week" && range !== "month") throw new Error("Only weekly and monthly periods can be reset.");
-    const transactions = filterByRange(range, refDate).filter((t) => t.type === "expense");
+    if (!["day", "week", "month"].includes(range)) throw new Error("This period cannot be reset.");
+    const transactions = filterByRange(range, refDate);
     await Promise.all(transactions.map((t) => DB.delete("transactions", t.id)));
     await load();
     return transactions.length;

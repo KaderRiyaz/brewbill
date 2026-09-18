@@ -1,5 +1,5 @@
 /* service-worker.js — caches the app shell so BrewBill works fully offline */
-const CACHE_NAME = "brewbill-cache-v3";
+const CACHE_NAME = "brewbill-cache-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
