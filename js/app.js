@@ -372,9 +372,20 @@ const App = (() => {
 
     // Mobile cart drawer
     const orderPanel = document.querySelector("[data-order-panel]");
+    const drawerBackdrop = document.querySelector("[data-mobile-cart-drawer]");
+    const closeMobileOrder = () => {
+      orderPanel.classList.remove("show-mobile");
+      drawerBackdrop.classList.remove("show");
+    };
+    const toggleMobileOrder = () => {
+      const isOpen = orderPanel.classList.toggle("show-mobile");
+      drawerBackdrop.classList.toggle("show", isOpen);
+    };
     document.querySelector("[data-mobile-cart-toggle]").addEventListener("click", () => {
-      orderPanel.classList.toggle("show-mobile");
+      toggleMobileOrder();
     });
+    document.querySelector("[data-close-order]").addEventListener("click", closeMobileOrder);
+    drawerBackdrop.addEventListener("click", closeMobileOrder);
 
     // Receipt
     document.querySelector("[data-close-receipt]").addEventListener("click", () => {
