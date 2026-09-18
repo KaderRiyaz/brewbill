@@ -34,6 +34,14 @@ const Finance = (() => {
     await load();
   }
 
+  async function resetPeriod(range, refDate = new Date()) {
+    if (range !== "week" && range !== "month") throw new Error("Only weekly and monthly periods can be reset.");
+    const transactions = filterByRange(range, refDate).filter((t) => t.type === "expense");
+    await Promise.all(transactions.map((t) => DB.delete("transactions", t.id)));
+    await load();
+    return transactions.length;
+  }
+
   // range: 'day' | 'week' | 'month' | 'custom'
   function rangeToBounds(range, refDate = new Date(), customStart, customEnd) {
     const start = new Date(refDate);
@@ -86,6 +94,7 @@ const Finance = (() => {
     getAll,
     addManual,
     remove,
+    resetPeriod,
     rangeToBounds,
     filterByRange,
     summarize,

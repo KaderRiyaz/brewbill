@@ -130,6 +130,8 @@ select { min-width: 150px; }
 .btn.primary:hover { filter: brightness(1.05); }
 .btn.large { padding: 14px; font-size: 15px; width: 100%; }
 .btn.small { padding: 6px 10px; font-size: 12px; }
+.btn.danger-outline { color: var(--danger); border-color: var(--danger); }
+.btn.danger-outline:hover { background: var(--danger-bg); }
 .btn-stack { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
 .link-btn { border: none; background: none; color: var(--accent); font-weight: 600; font-size: 13px; padding: 4px; }
 .icon-btn { border: none; background: var(--bg); width: 30px; height: 30px; border-radius: 50%; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
@@ -251,7 +253,7 @@ select { min-width: 150px; }
 .seg { flex: 1; border: none; background: none; padding: 8px 10px; border-radius: 999px; font-weight: 700; font-size: 13px; color: var(--ink-soft); }
 .seg.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 
-.report-range { margin-bottom: 14px; }
+.report-range { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .report-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 8px; }
 .stat-card { border-radius: var(--radius-md); padding: 12px; background: var(--bg); }
 .stat-card.income { background: var(--success-bg); }

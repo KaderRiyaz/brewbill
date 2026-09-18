@@ -265,6 +265,13 @@ const App = (() => {
   function renderFinanceReport() {
     const txns = Finance.filterByRange(activeRange, new Date());
     const summary = Finance.summarize(txns);
+    const resetButton = document.querySelector("[data-reset-period]");
+    const reportTitle = document.querySelector("[data-report-title]");
+    const periodLabel = activeRange === "week" ? "This Week" : activeRange === "month" ? "This Month" : "Today's";
+    resetButton.hidden = activeRange === "day";
+    resetButton.textContent = `Reset ${activeRange === "week" ? "week" : "month"} expenses`;
+    resetButton.title = `Remove all expenses from ${periodLabel.toLowerCase()}`;
+    reportTitle.textContent = `${periodLabel} Expenses`;
     document.querySelector("[data-report-income]").textContent = fmtMoney(summary.income);
     document.querySelector("[data-report-expense]").textContent = fmtMoney(summary.expense);
     document.querySelector("[data-report-net]").textContent = fmtMoney(summary.net);
@@ -287,7 +294,7 @@ const App = (() => {
           </div>
           <span class="transaction-date">${new Date(t.date).toLocaleDateString()}</span>
           <span class="transaction-amount">${t.type === "expense" ? "-" : "+"}${fmtMoney(t.amount)}</span>
-          ${t.source === "manual" ? `<button class="icon-btn danger" data-del-txn="${t.id}">✕</button>` : `<span class="tag small">auto</span>`}
+          ${t.type === "expense" && t.source === "manual" ? `<button class="icon-btn danger" data-del-txn="${t.id}" title="Delete expense" aria-label="Delete expense">✕</button>` : t.source === "manual" ? `<button class="icon-btn danger" data-del-txn="${t.id}" title="Delete entry" aria-label="Delete entry">✕</button>` : `<span class="tag small">auto</span>`}
         `;
         listEl.appendChild(row);
       });
@@ -298,6 +305,14 @@ const App = (() => {
         toast("Entry removed");
       });
     });
+  }
+
+  async function resetFinancePeriod() {
+    const label = activeRange === "week" ? "this week" : "this month";
+    if (!confirm(`Reset ${label}'s expenses? This will permanently delete all expense entries in ${label}.`)) return;
+    const removed = await Finance.resetPeriod(activeRange);
+    renderFinanceReport();
+    toast(removed ? `${removed} expense${removed === 1 ? "" : "s"} removed` : `No expenses found for ${label}`);
   }
 
   async function handleFinanceSubmit(e) {
@@ -435,6 +450,7 @@ const App = (() => {
         renderFinanceReport();
       });
     });
+    document.querySelector("[data-reset-period]").addEventListener("click", resetFinancePeriod);
     document.querySelector("[data-finance-form]").addEventListener("submit", handleFinanceSubmit);
 
     // Settings
