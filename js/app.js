@@ -462,26 +462,9 @@ const App = (() => {
     renderFinanceReport();
   }
 
-  async function seedDemoData() {
-    const existing = await DB.getAll("products");
-    if (existing.length) return;
-    const demo = [
-      { name: "Espresso", category: "Beverages", description: "Single shot, bold and quick.", variants: [{ name: "Single", price: 90 }, { name: "Double", price: 130 }] },
-      { name: "Cappuccino", category: "Beverages", description: "Espresso with steamed milk foam.", variants: [{ name: "Small", price: 120 }, { name: "Medium", price: 150 }, { name: "Large", price: 180 }] },
-      { name: "Cold Brew", category: "Beverages", description: "Slow steeped, served over ice.", variants: [{ name: "Regular", price: 160 }] },
-      { name: "Butter Croissant", category: "Pastries", description: "Flaky, buttery, baked fresh.", variants: [{ name: "Regular", price: 110 }] },
-      { name: "Blueberry Muffin", category: "Pastries", description: "", variants: [{ name: "Regular", price: 95 }] },
-      { name: "Potato Chips", category: "Snacks", description: "Salted, crunchy.", variants: [{ name: "Regular", price: 40 }] },
-    ];
-    for (const d of demo) {
-      await DB.put("products", { id: DB.uid(), ...d, createdAt: Date.now(), updatedAt: Date.now() });
-    }
-  }
-
   async function init() {
     settings = await DB.getSettings();
     await DB.saveSettings(settings);
-    await seedDemoData();
     wireEvents();
     await refreshAll();
 

@@ -85,19 +85,21 @@ const Products = (() => {
     variantDraft = [{ name: "Regular", price: "" }];
     formEl.reset();
     renderVariantRows(formEl);
-    formEl.querySelector("[data-form-title]").textContent = "Add product";
-    formEl.querySelector("[data-submit-label]").textContent = "Save product";
+    const modal = formEl.closest("[data-product-modal]");
+    modal.querySelector("[data-form-title]").textContent = "Add product";
+    modal.querySelector("[data-submit-label]").textContent = "Save product";
   }
 
   function loadIntoForm(formEl, product) {
     editingId = product.id;
     variantDraft = product.variants.map((v) => ({ ...v, price: String(v.price) }));
-    formEl.name.value = product.name;
-    formEl.category.value = product.category;
-    formEl.description.value = product.description || "";
+    formEl.elements.namedItem("name").value = product.name;
+    formEl.elements.namedItem("category").value = product.category;
+    formEl.elements.namedItem("description").value = product.description || "";
     renderVariantRows(formEl);
-    formEl.querySelector("[data-form-title]").textContent = "Edit product";
-    formEl.querySelector("[data-submit-label]").textContent = "Update product";
+    const modal = formEl.closest("[data-product-modal]");
+    modal.querySelector("[data-form-title]").textContent = "Edit product";
+    modal.querySelector("[data-submit-label]").textContent = "Update product";
   }
 
   function renderVariantRows(formEl) {
@@ -128,9 +130,9 @@ const Products = (() => {
   }
 
   async function submitForm(formEl) {
-    const name = formEl.name.value.trim();
-    const category = formEl.category.value;
-    const description = formEl.description.value.trim();
+    const name = formEl.elements.namedItem("name").value.trim();
+    const category = formEl.elements.namedItem("category").value;
+    const description = formEl.elements.namedItem("description").value.trim();
     const variants = variantDraft
       .map((v) => ({ name: v.name.trim() || "Regular", price: parseFloat(v.price) }))
       .filter((v) => !isNaN(v.price) && v.price >= 0);

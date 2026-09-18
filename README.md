@@ -55,10 +55,9 @@ python3 -m http.server 8080
 # or: npx serve .
 ```
 
-Open `http://localhost:8080` in Chrome or Edge. The app seeds a handful of demo products the
-first time it runs (Espresso, Cappuccino, Cold Brew, a croissant, a muffin, and chips) so you
-can try billing immediately — edit or delete them from the **Products** tab whenever you're
-ready to add your own menu.
+Open `http://localhost:8080` in Chrome or Edge. The app starts with an empty product catalog;
+add your own menu from the **Products** tab. Product, order, finance, and settings data are
+stored locally in IndexedDB and remain available after refresh.
 
 ## What's included out of the box
 
