@@ -545,17 +545,27 @@ const App = (() => {
   }
 
   async function init() {
-    settings = await DB.getSettings();
-    await DB.saveSettings(settings);
     wireEvents();
-    await refreshAll();
+
+    try {
+      settings = await DB.getSettings();
+      await DB.saveSettings(settings);
+      await refreshAll();
+    } catch (err) {
+      console.error("BrewBill initialization failed", err);
+      toast("Some data could not be loaded. You can still use the app.", true);
+    }
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" }).catch(() => {});
     }
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
 
   return { fmtMoney, toast };
 })();
