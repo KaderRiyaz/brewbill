@@ -221,6 +221,10 @@ select { min-width: 150px; }
 .modal form label { display: block; font-size: 12px; font-weight: 700; color: var(--ink-soft); margin: 12px 0 4px; }
 .modal form input, .modal form select, .modal form textarea { width: 100%; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.confirm-modal { max-width: 400px; }
+.confirm-message { color: var(--ink-soft); line-height: 1.5; margin: 8px 0 0; }
+.danger-btn { background: var(--danger); border-color: var(--danger); color: #fff; }
+.danger-btn:hover { background: #983131; border-color: #983131; }
 
 .variants-block { margin-top: 14px; }
 .variants-header { display: flex; justify-content: space-between; align-items: center; }

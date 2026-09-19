@@ -17,6 +17,51 @@ const App = (() => {
     toast._t = setTimeout(() => el.classList.remove("show"), 2600);
   }
 
+  function confirmAction({ title, message, confirmLabel = "Confirm" }) {
+    const backdrop = document.querySelector("[data-confirm-modal]");
+    const dialog = backdrop.querySelector(".confirm-modal");
+    const acceptButton = backdrop.querySelector("[data-confirm-accept]");
+    const cancelButton = backdrop.querySelector("[data-confirm-cancel]");
+    const closeButton = backdrop.querySelector("[data-confirm-close]");
+    const previousFocus = document.activeElement;
+
+    backdrop.querySelector("[data-confirm-title]").textContent = title;
+    backdrop.querySelector("[data-confirm-message]").textContent = message;
+    acceptButton.textContent = confirmLabel;
+    backdrop.classList.add("show");
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (confirmed) => {
+        if (settled) return;
+        settled = true;
+        backdrop.classList.remove("show");
+        backdrop.removeEventListener("click", handleBackdropClick);
+        document.removeEventListener("keydown", handleKeydown);
+        acceptButton.removeEventListener("click", accept);
+        cancelButton.removeEventListener("click", cancel);
+        closeButton.removeEventListener("click", cancel);
+        if (previousFocus && typeof previousFocus.focus === "function") previousFocus.focus();
+        resolve(confirmed);
+      };
+      const accept = () => finish(true);
+      const cancel = () => finish(false);
+      const handleBackdropClick = (event) => {
+        if (event.target === backdrop) cancel();
+      };
+      const handleKeydown = (event) => {
+        if (event.key === "Escape") cancel();
+      };
+
+      acceptButton.addEventListener("click", accept);
+      cancelButton.addEventListener("click", cancel);
+      closeButton.addEventListener("click", cancel);
+      backdrop.addEventListener("click", handleBackdropClick);
+      document.addEventListener("keydown", handleKeydown);
+      dialog.querySelector("[data-confirm-accept]").focus();
+    });
+  }
+
   // ---------------------------------------------------------------
   // Navigation
   // ---------------------------------------------------------------
@@ -237,7 +282,12 @@ const App = (() => {
   }
 
   async function confirmDeleteProduct(product) {
-    if (!confirm(`Delete "${product.name}"? This can't be undone.`)) return;
+    const confirmed = await confirmAction({
+      title: "Delete product?",
+      message: `Delete "${product.name}"? This can't be undone.`,
+      confirmLabel: "Delete product",
+    });
+    if (!confirmed) return;
     await Products.remove(product.id);
     renderProductsTab();
     renderBillingCatalog();
@@ -309,7 +359,12 @@ const App = (() => {
 
   async function resetFinancePeriod() {
     const label = activeRange === "day" ? "today" : activeRange === "week" ? "this week" : "this month";
-    if (!confirm(`Reset ${label}? This will permanently delete all income and expense entries in ${label}.`)) return;
+    const confirmed = await confirmAction({
+      title: `Reset ${label}?`,
+      message: `This will permanently delete all income and expense entries in ${label}.`,
+      confirmLabel: `Reset ${label}`,
+    });
+    if (!confirmed) return;
     const removed = await Finance.resetPeriod(activeRange);
     renderFinanceReport();
     toast(removed ? `${removed} entr${removed === 1 ? "y" : "ies"} removed` : `No entries found for ${label}`);
